@@ -1,0 +1,84 @@
+# Actividad 2: Automatizacion de Técnicas Pasiva/Activa y User Agent
+
+# PentestLab — herramienta de terminal
+
+Herramienta educativa en Python para practicar reconocimiento pasivo, consultas DNS, análisis de cabeceras HTTP, comprobaciones activas limitadas y captura local de cabeceras `User-Agent`. La interfaz principal es una **consola interactiva**; no necesita navegador ni Flask.
+
+## Requisitos
+- Python 3.10 o posterior.
+- Conexión a Internet para consultas DNS y fuentes públicas.
+- Para la opción de comprobación activa: Nmap instalado y disponible en el PATH. Esa opción solo debe usarse en equipos propios o con autorización explícita.
+
+## Instalación
+
+### Windows (PowerShell)
+```powershell
+cd pentest_actualizado
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python main.py
+```
+
+### Linux / macOS
+```bash
+cd pentest_actualizado
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python main.py
+```
+
+Si `colorama` no se instala, el programa sigue funcionando; únicamente tendrá menos color en terminales compatibles.
+
+## Menú
+1. **Consulta DNS:** A, AAAA, MX, NS, TXT, CNAME, SOA y CAA. Permite elegir tipos y timeout.
+2. **Enumeración pasiva:** DNS, WHOIS, Certificate Transparency (`crt.sh`), Wayback Machine y pistas básicas de tecnología HTTP.
+3. **Análisis HTTP:** código de estado, URL final, redirecciones, tiempos, cabeceras de seguridad, cabeceras informativas y cookies. Configura User-Agent, timeout, redirecciones y verificación TLS.
+4. **Comprobación activa de puertos:** Nmap para puertos elegidos. Requiere escribir `AUTORIZO` antes de iniciar.
+5. **Servidor local User-Agent:** inicia un servidor de prueba en `127.0.0.1` (por defecto puerto 8000); abre esa dirección en el navegador para registrar peticiones. Detén con Ctrl+C.
+6. **Historial de informes:** lista los análisis previos y permite visualizar los datos.
+7. **Registros User-Agent:** muestra las últimas peticiones recibidas.
+8. **Ayuda:** explicación de las funciones.
+
+## Informes
+Los análisis crean informes con marca de tiempo en `resultados/`, tanto en `.json` (datos estructurados) como en `.txt`. El servidor User-Agent también escribe `user_agents.log` y `user_agents.jsonl`. Los archivos permanecen después de cerrar la aplicación.
+
+## Uso responsable y limitaciones
+- Ejecuta comprobaciones activas solo contra sistemas propios o expresamente autorizados.
+- Las consultas pasivas siguen contactando servicios públicos (por ejemplo DNS, WHOIS o APIs públicas); pueden tener límites, cambiar o fallar por conectividad.
+- Los tiempos HTTP son aproximados y dependen de red, DNS, redirecciones y del servidor.
+- La cabecera `User-Agent` puede falsificarse y no demuestra la identidad real del cliente.
+- No compartas informes que puedan contener información sensible.
+
+## Interfaz de terminal
+
+La versión CLI incluye un banner ASCII, menú por módulos, paneles con bordes, colores y símbolos de estado. Los colores se muestran cuando `colorama` está instalado; si no está disponible, la herramienta continúa funcionando en modo sencillo. En Windows se recomienda utilizar Windows Terminal o PowerShell moderno para visualizar correctamente los caracteres Unicode.
+
+### Menú principal
+
+Al ejecutar `python main.py`, selecciona un módulo con su número:
+
+- `01` Consulta DNS por tipos de registro.
+- `02` Enumeración pasiva con fuentes públicas.
+- `03` Análisis HTTP, latencia y cabeceras.
+- `04` Comprobación limitada de puertos con Nmap (solo con autorización).
+- `05` Servidor local de captura User-Agent.
+- `06` Historial de informes TXT/JSON.
+- `07` Registros capturados de User-Agent.
+- `08` Ayuda.
+- `00` Salir.
+
+Los informes se almacenan en la carpeta `resultados/` situada junto al programa.
+
+## Informes visuales por ejecución
+
+Cada operación completada genera automáticamente tres formatos dentro de `resultados/`:
+
+- **HTML**: informe visual con resumen, tarjetas de métricas, índice navegable, tablas y estados escritos (no solo por color). Se puede abrir en cualquier navegador y está preparado para móvil, teclado e impresión.
+- **TXT**: informe lineal, fácil de leer, copiar o adjuntar a la entrega.
+- **JSON**: resultados estructurados para procesarlos posteriormente.
+
+Al terminar una consulta, el programa pregunta si quieres abrir el HTML en el navegador. También puedes entrar en **Centro de informes** para consultar ejecuciones anteriores. Cada petición recibida por el servidor local de User-Agent genera, además de los logs acumulados, un informe individual.
+
+Los informes reflejan únicamente los datos observados durante la ejecución; no se fabrican resultados. La ausencia de una cabecera o de una respuesta no confirma por sí sola una vulnerabilidad.
